@@ -70,6 +70,26 @@ RAM 16.1/256 GB    2.0 W
 
 macmon 帮到你的话，去给它点个 star ⭐
 
+### 字段契约（兼容性）
+
+代码只依赖 7 个字段，且**优先用新字段、旧别名兜底**（macmon 把 v0.7 的字段名标成了 deprecated，哪天删掉也不会让我们静默变 0）：
+
+| 用途 | 首选（macmon ≥ 0.9） | 兜底（v0.7 别名，已 deprecated） |
+|---|---|---|
+| CPU 负载 | `cpu_scaled_ratio` | `cpu_usage_pct` |
+| GPU 负载 | `gpu_scaled_ratio` | `gpu_usage[1]`（`[0]` 是频率） |
+| 温度 | `temp.cpu_temp_avg` / `gpu_temp_avg`（可为 `null`） | — |
+| 内存 | `memory.ram_usage` / `ram_total` | — |
+| 功耗 | `sys_power` | — |
+
+实测版本：**macmon 0.10.0**（Apple M5 Ultra / macOS 27）。
+
+两种失败都做过注入测试：
+- 温度字段是 `null`（某些机型不可用）→ 显示 `--`，其余照常
+- macmon 没跑 / 2 秒超时 → 整卡 `--`，底部标 `macmon offline`，**绝不伪装成 0 W 的待机状态**
+
+读取用 `URLSession` 异步 + 2 秒超时，不用 `Data(contentsOf:)`（它默认 60 秒超时，会拖住扩展、被系统记「超预算」，越刷越少）。
+
 ### 安装
 
 ```bash
