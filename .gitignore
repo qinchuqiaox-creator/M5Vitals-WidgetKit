@@ -1,0 +1,7 @@
+.DS_Store
+*.app
+*.xcodeproj
+build/
+*.dSYM
+App/Info.plist
+Widget/Info.plist

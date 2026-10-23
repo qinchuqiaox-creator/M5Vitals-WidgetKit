@@ -1,0 +1,72 @@
+name: M5VitalsWidget
+options:
+  bundleIdPrefix: com.qinchuqiaox
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    SWIFT_VERSION: "5.0"
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: NO
+
+targets:
+  M5VitalsNative:
+    type: application
+    platform: macOS
+    sources:
+      - path: App
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleName: M5VitalsNative
+        CFBundleDisplayName: M5Vitals
+        CFBundleShortVersionString: "1.1"
+        CFBundleVersion: "2"
+        LSUIElement: true
+        NSHighResolutionCapable: true
+        LSMinimumSystemVersion: "14.0"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.qinchuqiaox.m5vitalsnative
+        PRODUCT_NAME: M5VitalsNative
+        SKIP_INSTALL: NO
+    dependencies:
+      - target: M5VitalsWidget
+        embed: true
+        codeSign: true
+
+  M5VitalsWidget:
+    type: app-extension
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: Widget
+    info:
+      path: Widget/Info.plist
+      properties:
+        CFBundleName: M5VitalsWidget
+        CFBundleDisplayName: M5Vitals
+        CFBundleShortVersionString: "1.1"
+        CFBundleVersion: "2"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.qinchuqiaox.m5vitalsnative.widget
+        PRODUCT_NAME: M5VitalsWidget
+        SKIP_INSTALL: YES
+        APPLICATION_EXTENSION_API_ONLY: YES
+        CODE_SIGN_ENTITLEMENTS: Widget/Widget.entitlements
+
+schemes:
+  M5VitalsNative:
+    build:
+      targets:
+        M5VitalsNative: all
+    run:
+      config: Release
